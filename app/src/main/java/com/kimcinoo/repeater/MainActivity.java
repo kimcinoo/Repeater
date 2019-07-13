@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -53,27 +54,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        /* save current position using Bundle */
+        outState.putInt(PLAYBACK_TIME, mCurrentPosition);
 
-        outState.putInt(PLAYBACK_TIME, mVideoView.getCurrentPosition());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         initializePlayer();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         releasePlayer();
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
+        /* get current position here. because getCurrentPosition returns 0 on onStop */
+        Log.d("onPause", "save mCurrentPosition = " + mVideoView.getCurrentPosition());
+        mCurrentPosition = mVideoView.getCurrentPosition();
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             mVideoView.pause();
